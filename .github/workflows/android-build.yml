@@ -19,20 +19,24 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
+
+    - name: Install Gradle 8.5
+      run: |
+        curl -L https://services.gradle.org/distributions/gradle-8.5-bin.zip -o gradle-8.5-bin.zip
+        unzip gradle-8.5-bin.zip
+        echo "$PWD/gradle-8.5/bin" >> $GITHUB_PATH
+
+    - name: Generate Gradle Wrapper
+      run: gradle wrapper
 
     - name: Grant execute permission for gradlew
-      # نستخدم find للبحث عن ملف gradlew وتشغيله أينما كان
-      run: find . -name "gradlew" -exec chmod +x {} +
-
+      run: chmod +x gradlew
+      
     - name: Build with Gradle
-      # سنقوم بالدخول للمجلد الذي يحتوي على gradlew تلقائياً وتنفيذ البناء
-      run: |
-        cd $(dirname $(find . -name "gradlew" | head -1))
-        ./gradlew assembleDebug
-
+      run: ./gradlew :app:assembleDebug
+      
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: AbuAlZahra-Child-App
-        path: "**/*.apk" # سيبحث عن أي ملف APK تم إنتاجه ويرفعه
+        path: app/build/outputs/apk/debug/app-debug.apk
