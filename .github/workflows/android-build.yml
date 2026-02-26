@@ -20,17 +20,18 @@ jobs:
         cache: gradle
 
     - name: Setup Gradle
-      # قمنا بإضافة --no-daemon لتسريع العملية ومنع التعليق
+      # قمنا بتثبيت الإصدار 8.5 ليتوافق مع أندرويد 14
       run: |
         gradle wrapper --gradle-version 8.5
         chmod +x gradlew
 
     - name: Build with Gradle
-      # هذا الأمر سيقوم بتحميل كل شيء وبناء التطبيق
+      # لاحظ حذف نقطتين الرأس قبل assembleDebug لأن الملفات في المجلد الرئيسي
       run: ./gradlew assembleDebug
       
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: AbuAlZahra-Child-App
-        path: app/build/outputs/apk/debug/*.apk
+        # هذا المسار سيبحث عن الـ APK في أي مكان تم إنتاجه فيه
+        path: "**/build/outputs/apk/debug/*.apk"
