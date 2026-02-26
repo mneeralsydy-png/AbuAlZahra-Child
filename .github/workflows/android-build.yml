@@ -19,22 +19,16 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Auto-Setup & Build
+    - name: Build APK
+      # ندخل للمجلد وننفذ كل الأوامر بداخله مرة واحدة
       run: |
-        # 1. البحث عن المجلد الذي يحتوي على ملف settings.gradle
-        PROJECT_ROOT=$(find . -name "settings.gradle" -exec dirname {} + | head -n 1)
-        echo "Found project at: $PROJECT_ROOT"
-        cd $PROJECT_ROOT
-        
-        # 2. توليد الـ Wrapper إذا كان مفقوداً
+        cd AbuAlZahra-Child
         gradle wrapper --gradle-version 8.5
         chmod +x gradlew
-        
-        # 3. تشغيل البناء مع اكتشاف الموديولات تلقائياً
-        ./gradlew assembleDebug --stacktrace
+        ./gradlew assembleDebug
 
-    - name: Upload APK Artifact
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: AbuAlZahra-Child-App
+        name: My-App-Debug
         path: "**/build/outputs/apk/debug/*.apk"
