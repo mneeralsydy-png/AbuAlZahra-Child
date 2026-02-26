@@ -3,6 +3,8 @@ name: Android CI Build
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -17,18 +19,25 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
 
-    - name: Build APK
-      # ندخل للمجلد وننفذ كل الأوامر بداخله مرة واحدة
+    - name: Install Gradle 8.5
       run: |
-        cd AbuAlZahra-Child
-        gradle wrapper --gradle-version 8.5
-        chmod +x gradlew
-        ./gradlew assembleDebug
+        curl -L https://services.gradle.org/distributions/gradle-8.5-bin.zip -o gradle-8.5-bin.zip
+        unzip gradle-8.5-bin.zip
+        echo "$PWD/gradle-8.5/bin" >> $GITHUB_PATH
 
-    - name: Upload APK
+    - name: Generate Gradle Wrapper
+      run: gradle wrapper
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      
+    # لاحظ أنني أضفت :app: قبل assembleDebug
+    - name: Build with Gradle
+      run: ./gradlew :app:assembleDebug
+      
+    - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: My-App-Debug
-        path: "**/build/outputs/apk/debug/*.apk"
+        name: AbuAlZahra-Child-App
+        path: app/build/outputs/apk/debug/app-debug.apk
