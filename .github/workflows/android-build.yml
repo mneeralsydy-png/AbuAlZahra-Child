@@ -20,13 +20,13 @@ jobs:
         cache: gradle
 
     - name: Setup Gradle
-      # بما أن ملف gradlew غير موجود في مستودعك، هذا الأمر سيقوم بإنشائه
+      # قمنا بإضافة --no-daemon لتسريع العملية ومنع التعليق
       run: |
-        gradle wrapper
+        gradle wrapper --gradle-version 8.5
         chmod +x gradlew
 
     - name: Build with Gradle
-      # تنفيذ البناء
+      # هذا الأمر سيقوم بتحميل كل شيء وبناء التطبيق
       run: ./gradlew assembleDebug
       
     - name: Upload APK Artifact
